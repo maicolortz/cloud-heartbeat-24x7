@@ -1,0 +1,14 @@
+name: Cloud 24x7 Autonomous Worker & Self-Audit Heartbeat
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  cloud-cycle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Cloud Autonomous Worker & Verify 16/16 Self-Audit
+        run: |
+          curl -fsS https://voice-ai-studio-mao.vercel.app/api/v1/cloud/cron-autonomo -o resp.json
+          python3 -c "import json; d=json.load(open('resp.json')); print('STATUS:', d.get('status'), 'AUDIT:', d.get('auto_auditoria_16_filtros_y_redteam', {}).get('filtros_superados'), 'GH_SYNC:', d.get('github_cloud_sync')); assert d.get('auto_auditoria_16_filtros_y_redteam', {}).get('aprobado_16_de_16') is True"
